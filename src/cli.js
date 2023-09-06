@@ -41,10 +41,15 @@ program
     }
   });
 
-program
+
+  program
   .command('findRepo <arg1>')
   .description('Поиск репозитория по имени или id')
-  .action(async () => {
+  .action(async (arg1) => {
+    if (!arg1) {
+      console.error('Отсутствует обязательный аргумент. Используйте команду следующим образом: findRepo <arg1>');
+      return;
+    }
     try {
       const response = await axios.get(`http://localhost:${port}/repositories/${arg1}`);
       console.log(response.data);
@@ -52,5 +57,4 @@ program
       console.error('Произошла ошибка:', error);
     }
   });
-
   module.exports = program;

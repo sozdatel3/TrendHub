@@ -1,6 +1,8 @@
 const express = require('express');
 const {addRepositoriesToDB,  Repository, takeRepo, findAllRepositories} = require('./database')
 const {getRepoByNameFromApi, getTrendingRepositories} = require('./apiWork')
+const {loggerError} = require('./logger');
+
 const app = express();
 let syncIntervalId;
 const syncInterval = process.env.UPDATE_TIME * 60 * 1000; // 10 минут в миллисекундах
@@ -11,7 +13,7 @@ const syncInterval = process.env.UPDATE_TIME * 60 * 1000; // 10 минут в м
       res.json(repository); // Этот код выполняется, когда промис разрешится.
     })
     .catch((error) => {
-      console.error('Произошла ошибка:', error);
+      loggerError.info('Произошла ошибка:', error);
       res.status(500).json({ error: 'Произошла ошибка' });
     });
   });
@@ -20,8 +22,6 @@ const syncInterval = process.env.UPDATE_TIME * 60 * 1000; // 10 минут в м
 // Получение репозитория по имени или ID
 app.get('/repositories/:nameOrId', (req, res) => {
     const nameOrId = req.params.nameOrId;
-    const findInDb = true;
-    // try {
       takeRepo(nameOrId).then((repository) => {if (repository == null) {
         getRepoByNameFromApi(nameOrId).then((repo) => { 
             if (repo != null) {
@@ -33,12 +33,12 @@ app.get('/repositories/:nameOrId', (req, res) => {
             }
         })
         .catch((error) => {
-            console.error('Произошла ошибка:', error);
+            loggerError.info('Произошла ошибка:', error);
             res.status(500).json({ error: 'Произошла ошибка' });
         });
       } else { res.json(repository);}})
       .catch((error) => {
-        console.error('Произошла ошибка:', error);
+        loggerError.info('Произошла ошибка:', error);
         res.status(500).json({ error: 'Произошла ошибка' });
       })})
   
@@ -52,11 +52,10 @@ app.get('/repositories/:nameOrId', (req, res) => {
           }
           // новый интервал синхронизации
           syncIntervalId = setInterval(() => getTrendingRepositories(addRepositoriesToDB), syncInterval);
-        // Repository.sync();
+
         res.status(200).json('Синхронизация прошла успешно');
-        // TODO сбросить основную синхронизацию
     } catch (error) {
-        console.error('Произошла ошибка:', error);
+        loggerError.info('Произошла ошибка:', error);
         res.status(500).json({ error: 'Произошла ошибка' });
     }
   });

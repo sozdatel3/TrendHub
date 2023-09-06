@@ -1,5 +1,6 @@
 const axios = require('axios');
 require('dotenv').config();
+const {loggerProcess, loggerError} = require('./logger');
 
 async function getRepoByNameFromApi(nameOrId) {
     try {
@@ -14,7 +15,8 @@ async function getRepoByNameFromApi(nameOrId) {
         return null; // Репозиторий не найден
       }
     } catch (error) {
-        console.error('Ошибка при запросе к GitHub API:', error);
+        // console.error();
+        loggerError.info('Ошибка при запросе к GitHub API:', error);
     }
 }
 
@@ -31,9 +33,11 @@ async function getTrendingRepositories(doWithResArray) {
       });
   
       doWithResArray(response.data.items);
-      console.log('Синхронизация прошла успешно');
+      // console.log('Синхронизация прошла успешно');
+      loggerProcess.info('Синхронизация прошла успешно');
     } catch (error) {
-      console.error('Ошибка при запросе к GitHub API:', error);
+      // console.error('Ошибка при запросе к GitHub API:', error);
+      loggerError.info('Ошибка при запросе к GitHub API:', error);
     }
   }
   

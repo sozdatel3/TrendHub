@@ -1,20 +1,6 @@
 const {Sequelize, DataTypes} = require('sequelize');
 require('dotenv').config();
-const winston = require('winston');
-
-const logger = winston.createLogger({
-  level: 'info',
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.printf(({ timestamp, level, message }) => {
-      return `${timestamp} [${level}]: ${message}`;
-    })
-  ),
-  transports: [
-    new winston.transports.File({ filename: 'database.log' }) // Файл для записи логов запросов
-  ]
-});
-
+const {loggerDataBase, loggerError} = require('./logger');
 
 const baseHost = process.env.DB_HOST;
 const basePort = process.env.DB_PORT;
@@ -26,6 +12,9 @@ const sequelize = new Sequelize(baseName, baseUserName, basePassword, {
   host: 'localhost',
   dialect: 'postgres',
   port: 5432, // Порт PostgreSQL
+  logging: (msg) => {
+    loggerDataBase.info(msg);
+  }
 });
 
 const Repository = sequelize.define('Repository', {
@@ -112,9 +101,9 @@ const Repository = sequelize.define('Repository', {
           });
         }
       }
-      console.log('Данные успешно добавлены в базу данных.');
+      loggerDataBase.info('Данные успешно добавлены в базу данных.');
     } catch (error) {
-      console.error('Произошла ошибка при добавлении данных в базу данных:', error);
+      loggerError.info('Произошла ошибка при добавлении данных в базу данных:', error);
     }
   }
 
@@ -135,7 +124,7 @@ const takeRepo = async function (nameOrId) {
             return null; // Репозиторий не найден
         }
     } catch (error) {
-        console.error('Ошибка при поиске репозитория:', error);
+        loggerError.info('Ошибка при поиске репозитория:', error);
         throw error;
     }
 }
@@ -145,7 +134,7 @@ async function findAllRepositories() {
         const repositories = await Repository.findAll();
         return repositories;
     } catch (error) {
-        console.error('Ошибка при поиске репозиториев в базе данных:', error);
+        loggerError.info('Ошибка при поиске репозиториев в базе данных:', error);
         throw error;
     }
 }
