@@ -63,21 +63,40 @@ const Repository = sequelize.define('Repository', {
     try {
       // Итерируемся по данным и добавляем каждый репозиторий в базу данных
       for (const repoData of data) {
-        await Repository.create({
-          id: repoData.id,
-          name: repoData.name,
-          full_name: repoData.full_name,
-          html_url: repoData.html_url,
-          description: repoData.description,
-          stargazers_count: repoData.stargazers_count,
-          language: repoData.language,
-          has_issues: repoData.has_issues,
-          has_projects: repoData.has_projects,
-          has_downloads: repoData.has_downloads,
-          has_wiki: repoData.has_wiki,
-          has_pages: repoData.has_pages,
-          forks_count: repoData.forks_count,
-        });
+        const existingRepo = await Repository.findOne({ where: { id: repoData.id } });
+  
+        if (existingRepo) {
+          await existingRepo.update({
+            name: repoData.name,
+            full_name: repoData.full_name,
+            html_url: repoData.html_url,
+            description: repoData.description,
+            stargazers_count: repoData.stargazers_count,
+            language: repoData.language,
+            has_issues: repoData.has_issues,
+            has_projects: repoData.has_projects,
+            has_downloads: repoData.has_downloads,
+            has_wiki: repoData.has_wiki,
+            has_pages: repoData.has_pages,
+            forks_count: repoData.forks_count,
+          });
+        } else {
+          await Repository.create({
+            id: repoData.id,
+            name: repoData.name,
+            full_name: repoData.full_name,
+            html_url: repoData.html_url,
+            description: repoData.description,
+            stargazers_count: repoData.stargazers_count,
+            language: repoData.language,
+            has_issues: repoData.has_issues,
+            has_projects: repoData.has_projects,
+            has_downloads: repoData.has_downloads,
+            has_wiki: repoData.has_wiki,
+            has_pages: repoData.has_pages,
+            forks_count: repoData.forks_count,
+          });
+        }
       }
       console.log('Данные успешно добавлены в базу данных.');
     } catch (error) {
@@ -85,13 +104,43 @@ const Repository = sequelize.define('Repository', {
     }
   }
 
-const takeRepoInfo = async function takeRepo(name , id) {
+const takeRepo = async function (nameOrId) {
+    const numberFromId = isNaN(Number(nameOrId)) ? -1 : Number(nameOrId);
     try {
-        
+        // Repository.findAll
+        const repo = await Repository.findOne({
+            // where: {
+            //     [Sequelize.Op.or]: [
+            //         { id: Number(nameOrId) },
+            //         { name: nameOrId }
+            //     ]
+            // }
+            where: 
+                Sequelize.or(
+                    { id: numberFromId },
+                    { name: nameOrId }
+                )
+            });
+        if (repo) {
+            return repo;
+        } else {
+            return null; // Репозиторий не найден
+        }
     } catch (error) {
-
+        console.error('Ошибка при поиске репозитория:', error);
+        throw error;
     }
-}  
+}
+
+async function findAllRepositories() {
+    try {
+        const repositories = await Repository.findAll();
+        return repositories;
+    } catch (error) {
+        console.error('Ошибка при поиске репозиториев в базе данных:', error);
+        throw error;
+    }
+}
 // module.exports = addRepositoriesToDatabase;//addRepositoriesToDB;
 // module.exports = Repository;
 // module.exports = sequelize;
@@ -99,4 +148,6 @@ module.exports = {
     addRepositoriesToDB,
     Repository,
     sequelize,
+    takeRepo,
+    findAllRepositories,
 };
