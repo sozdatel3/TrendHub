@@ -1,7 +1,7 @@
 
 const {getTrendingRepositories} = require('./apiWork')
 const {addRepositoriesToDB, Repository, sequelize}  = require('./database')
-const app = require('./server')
+let {app, syncIntervalId, syncInterval} = require('./server')
 const port = process.env.PORT || 4000;
 
 app.listen(port, () => {
@@ -10,9 +10,7 @@ app.listen(port, () => {
 
 Repository.sync();
 
-
-
 getTrendingRepositories(addRepositoriesToDB);
-//addRepositoriesToDB(response.data.items).catch(error => {
-    //    console.error('Ошибка при добавление в базу данных:', error);
-    //});
+
+// Запуск синхронизации
+syncIntervalId = setInterval(() => getTrendingRepositories(addRepositoriesToDB), syncInterval)

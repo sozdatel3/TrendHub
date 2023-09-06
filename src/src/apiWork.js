@@ -24,14 +24,14 @@ async function getTrendingRepositories(doWithResArray) {
       const response = await axios.get('https://api.github.com/search/repositories', {
         params: {
           q: `stars:>${process.env.STARS_NUMBER}`, // Фильтр
-          sort: 'stars',    // Сортировка
-          order: 'desc',    // Порядок сортировки
+          sort: 'stars',
+          order: 'desc',
           per_page: `${process.env.MAX_REPO_NUMBER}`,
         },
       });
   
       doWithResArray(response.data.items);
-      
+      console.log('Синхронизация прошла успешно');
     } catch (error) {
       console.error('Ошибка при запросе к GitHub API:', error);
     }

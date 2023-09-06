@@ -2,7 +2,8 @@ const express = require('express');
 const {addRepositoriesToDB,  Repository, takeRepo, findAllRepositories} = require('./database')
 const {getRepoByNameFromApi, getTrendingRepositories} = require('./apiWork')
 const app = express();
-
+let syncIntervalId;
+const syncInterval = process.env.UPDATE_TIME * 60 * 1000; // 10 минут в миллисекундах
   // Получение всех репозиториев
   app.get('/repositories', (req, res) => {
     findAllRepositories()
@@ -43,16 +44,21 @@ app.get('/repositories/:nameOrId', (req, res) => {
   
 
   // Начать синхронизацию с GitHub
-  app.post('/sync', (req, res) => {
+  app.get('/sync', (req, res) => {
     try {
         getTrendingRepositories(addRepositoriesToDB);
+        if (syncIntervalId) {
+            clearInterval(syncIntervalId);
+          }
+          // новый интервал синхронизации
+          syncIntervalId = setInterval(() => getTrendingRepositories(addRepositoriesToDB), syncInterval);
         Repository.sync();
-        res.status(200);
-        /// TODO сбросить основную синхронизацию
+        res.status(200).json('Синхронизация прошла успешно');
+        // TODO сбросить основную синхронизацию
     } catch (error) {
         console.error('Произошла ошибка:', error);
         res.status(500).json({ error: 'Произошла ошибка' });
     }
   });
-  
-  module.exports = app;
+
+  module.exports = {app, syncIntervalId, syncInterval};
