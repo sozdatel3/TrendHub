@@ -4,6 +4,7 @@ let {app, syncIntervalId, syncInterval} = require('./server')
 const {loggerProcess} = require('./logger');
 const program = require('./cli')
 const readline = require('readline');
+const { exit } = require('process');
 
 const port = process.env.PORT || 4000;
 
@@ -30,22 +31,22 @@ syncIntervalId = setInterval(() => getTrendingRepositories(addRepositoriesToDB),
 // });
 
 function processCommand() {
-  rl.question('Введите команду (sync, allRepo, findRepo): ', async (command) => {
+  rl.question('Введите команду (help , sync, allRepo, findRepo, exit): ', async (command) => {
     if (command === 'exit') {
-      rl.close();
-      return;
+      exit();
+      // rl.close();
+      // return;
     }
-    switch (command) {
-      case 'sync':
-      case 'allRepo':
-      case 'findRepo':
-        program.parse([process.argv[0], process.argv[1], command]);
-        break;
-      default:
-        console.log('Неправильная команда. Пожалуйста, введите sync, allRepo или findRepo.');
+    if (command == 'sync' || command == 'allRepo' || command == 'help' || command.startsWith('findRepo')) {
+      const [cmd, ...args] = command.split(' '); // Разделяем команду и аргументы
+      program.parse(['node', 'index', cmd, ...args]);
     }
-    processCommand(); // Возобновляем прослушивание stdin
+    else { 
+      console.log('Неправильная команда. Пожалуйста, введите help, sync, allRepo или findRepo.');
+    }
+    setTimeout(processCommand, 100);
+    // Возобновляем прослушивание stdin
   });
 }
 
-processCommand(); 
+processCommand();

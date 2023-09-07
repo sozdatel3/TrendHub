@@ -9,7 +9,7 @@ const loggerDataBase = winston.createLogger({
     })
   ),
   transports: [
-    new winston.transports.File({ filename: '../log/database.log' })
+    new winston.transports.File({ filename: 'log/database.log' })
   ]
 });
 
@@ -22,7 +22,7 @@ const loggerProcess = winston.createLogger({
       })
     ),
     transports: [
-      new winston.transports.File({ filename: '../log/process.log' })
+      new winston.transports.File({ filename: 'log/process.log' })
     ]
   });
   
@@ -35,7 +35,7 @@ const loggerProcess = winston.createLogger({
       })
     ),
     transports: [
-      new winston.transports.File({ filename: '../log/errors.log' })
+      new winston.transports.File({ filename: 'log/errors.log' })
     ]
   });
   

@@ -43,18 +43,27 @@ program
 
 
   program
-  .command('findRepo <arg1>')
+  .command('findRepo')
+  .argument('[nameOrId]', 'Name or Id of searching repo')
   .description('Поиск репозитория по имени или id')
-  .action(async (arg1) => {
-    if (!arg1) {
-      console.error('Отсутствует обязательный аргумент. Используйте команду следующим образом: findRepo <arg1>');
+  .action(async (nameOrId) => {
+    if (nameOrId == undefined) {
+      console.error('Отсутствует обязательный аргумент. Используйте команду следующим образом: findRepo <nameOrId>');
       return;
     }
     try {
-      const response = await axios.get(`http://localhost:${port}/repositories/${arg1}`);
+      const response = await axios.get(`http://localhost:${port}/repositories/${nameOrId}`);
       console.log(response.data);
     } catch (error) {
       console.error('Произошла ошибка:', error);
     }
   });
+
+  program
+  .command('help')
+  .description('Вывести справку о доступных командах')
+  .action(() => {
+    program.outputHelp(); // Вывести справку о доступных командах
+  });
+  
   module.exports = program;
