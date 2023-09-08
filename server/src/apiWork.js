@@ -41,6 +41,43 @@ async function getTrendingRepositories(doWithResArray) {
     }
   }
   
+  function formatRepoFromApi (repoData) {
+    // const repoArray;
+    
+    if (repoData.length > 0) {
+    return outputArray = repoData.map(repo => ({
+      id: repo.id,
+      name: repo.name,
+      full_name: repo.full_name,
+      html_url: repo.html_url,
+      description: repo.description,
+      stargazers_count: repo.stargazers_count,
+      language: repo.language,
+      has_issues: repo.has_issues,
+      has_projects: repo.has_projects,
+      has_downloads: repo.has_downloads,
+      has_wiki: repo.has_wiki,
+      has_pages: repo.has_pages,
+      forks_count: repo.forks_count,
+    }))
+    } else {
+      return [{ id: repoData.id,
+    name: repoData.name,
+    full_name: repoData.full_name,
+    html_url: repoData.html_url,
+    description: repoData.description,
+    stargazers_count: repoData.stargazers_count,
+    language: repoData.language,
+    has_issues: repoData.has_issues,
+    has_projects: repoData.has_projects,
+    has_downloads: repoData.has_downloads,
+    has_wiki: repoData.has_wiki,
+    has_pages: repoData.has_pages,
+    forks_count: repoData.forks_count,
+    }]
+    }
+  };
+  
   module.exports = {
-    getRepoByNameFromApi, getTrendingRepositories
+    getRepoByNameFromApi, getTrendingRepositories, formatRepoFromApi
   }

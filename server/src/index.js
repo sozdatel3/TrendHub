@@ -1,6 +1,6 @@
 const {getTrendingRepositories} = require('./apiWork')
 const {addRepositoriesToDB, Repository, sequelize}  = require('./database')
-let {app, syncIntervalId, syncInterval} = require('./server')
+let {app, syncIntervalId, syncInterval, lastSyncTime} = require('./server')
 const {loggerProcess} = require('./logger');
 const program = require('./cli')
 const readline = require('readline');
@@ -20,10 +20,12 @@ app.listen(port, () => {
 
 Repository.sync();
 
+lastSyncTime = new Date();
 getTrendingRepositories(addRepositoriesToDB);
 
 // Запуск синхронизации
-syncIntervalId = setInterval(() => getTrendingRepositories(addRepositoriesToDB), syncInterval)
+syncIntervalId = setInterval(() => {lastSyncTime = new Date();
+  getTrendingRepositories(addRepositoriesToDB)}, syncInterval)
 
 // rl.question('Введите команду (sync, allRepo, findRepo): ', (command) => {
 //     program.parse([process.argv[0], process.argv[1], command]);

@@ -1,12 +1,22 @@
 const express = require('express');
 const {addRepositoriesToDB,  Repository, takeRepo, findAllRepositories} = require('./database')
-const {getRepoByNameFromApi, getTrendingRepositories} = require('./apiWork')
+const {getRepoByNameFromApi, getTrendingRepositories, formatRepoFromApi} = require('./apiWork')
 const {loggerError} = require('./logger');
 
 const app = express();
+let lastSyncTime = new Date();
+// Разрешение доступа со всех источников
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  next();
+}); //TODO change private policy*/
+
 let syncIntervalId;
 const syncInterval = process.env.UPDATE_TIME * 60 * 1000; // 10 минут в миллисекундах
-  // Получение всех репозиториев
+  
+// Получение всех репозиториев
   app.get('/repositories', (req, res) => {
     findAllRepositories()
     .then((repository) => {
@@ -26,7 +36,8 @@ app.get('/repositories/:nameOrId', (req, res) => {
         getRepoByNameFromApi(nameOrId).then((repo) => { 
             if (repo != null) {
                 const message = 'Репозиторий не найден в трендовых репозиториях, но существует на gitHub'; ///TODO сделай красивую обработку
-                res.json({message, repo});
+                const newRepo = formatRepoFromApi(repo);
+                res.json({message, newRepo} );
             } else {
                 const cantFind = 'Такого репозитория не существует';
                 res.json(cantFind);
@@ -36,7 +47,10 @@ app.get('/repositories/:nameOrId', (req, res) => {
             loggerError.info('Произошла ошибка:', error);
             res.status(500).json({ error: 'Произошла ошибка' });
         });
-      } else { res.json(repository);}})
+      } else { 
+        const message = 'Репозиторий найден в трендовых репозиториях';
+        const newRepo = repository;
+        res.json({message, newRepo});}})
       .catch((error) => {
         loggerError.info('Произошла ошибка:', error);
         res.status(500).json({ error: 'Произошла ошибка' });
@@ -47,6 +61,7 @@ app.get('/repositories/:nameOrId', (req, res) => {
   app.get('/sync', (req, res) => {
     try {
         getTrendingRepositories(addRepositoriesToDB);
+        lastSyncTime = new Date();
         if (syncIntervalId) {
             clearInterval(syncIntervalId);
           }
@@ -60,4 +75,8 @@ app.get('/repositories/:nameOrId', (req, res) => {
     }
   });
 
-  module.exports = {app, syncIntervalId, syncInterval};
+  // app.get('/last-update', (req, res) => {
+  //   res.json(lastSyncTime);
+  // });
+
+  module.exports = {app, syncIntervalId, syncInterval, lastSyncTime};

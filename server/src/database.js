@@ -110,15 +110,15 @@ const Repository = sequelize.define('Repository', {
 const takeRepo = async function (nameOrId) {
     const numberFromId = isNaN(Number(nameOrId)) ? -1 : Number(nameOrId);
     try {
-        const repo = await Repository.findOne({
-
+        const repo = await Repository.findAll({
+            limit: 5,
             where: 
                 Sequelize.or(
                     { id: numberFromId },
-                    { name: nameOrId }
+                    { name: { [Sequelize.Op.like]: `%${nameOrId}%` }}//nameOrId }
                 )
             });
-        if (repo) {
+        if (repo.length > 0) {
             return repo;
         } else {
             return null; // Репозиторий не найден
@@ -141,6 +141,7 @@ async function findAllRepositories() {
 // module.exports = addRepositoriesToDatabase;//addRepositoriesToDB;
 // module.exports = Repository;
 // module.exports = sequelize;
+
 module.exports = {
     addRepositoriesToDB,
     Repository,
