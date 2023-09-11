@@ -1,5 +1,5 @@
 # TrendHub
-
+![logo](client/public/logo.png)
 This project is an implementation of a service that checks the GitHub API periodically to pull trending repositories with the most stars. It also provides a public API and a CLI client for interacting with the service.
 
 ## Table of Contents
