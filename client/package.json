@@ -7,13 +7,17 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "node ../server/src/index.js",
+    "buildrun": "npm run build && serve dist"
   },
   "dependencies": {
     "axios": "^1.5.0",
     "process": "^0.11.10",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "serve": "^14.2.1",
+    "usehooks-ts": "^2.9.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",

@@ -10,13 +10,12 @@ async function getRepoByNameFromApi(nameOrId) {
         },
       });
       if (response.data.items.length > 0) {
-        return response.data.items[0];
+        return response.data.items;
       } else {
         return null; // Репозиторий не найден
       }
     } catch (error) {
-        // console.error();
-        loggerError.info('Ошибка при запросе к GitHub API:', error);
+        loggerError.error('Ошибка при запросе к GitHub API:', error);
     }
 }
 
@@ -33,16 +32,13 @@ async function getTrendingRepositories(doWithResArray) {
       });
   
       doWithResArray(response.data.items);
-      // console.log('Синхронизация прошла успешно');
       loggerProcess.info('Синхронизация прошла успешно');
     } catch (error) {
-      // console.error('Ошибка при запросе к GitHub API:', error);
-      loggerError.info('Ошибка при запросе к GitHub API:', error);
+      loggerError.error('Ошибка при запросе к GitHub API:', error);
     }
   }
   
   function formatRepoFromApi (repoData) {
-    // const repoArray;
     
     if (repoData.length > 0) {
     return outputArray = repoData.map(repo => ({

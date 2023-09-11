@@ -19,5 +19,10 @@
   }
   
   .search-bar:hover {
-    /* Ваши стили при наведении */
+    background-color: #535bf2;
+    color: #fff;
+    border: 8px solid #535bf2;
+    border-radius: 8px;
+    transition: background-color 0.3s, color 0.3s, border 0.3s;
+    cursor: pointer;
   }

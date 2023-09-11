@@ -1,0 +1,14 @@
+.Timer {
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    background-color: #242424;
+    color: rgba(255, 255, 255, 0.87);
+    padding: 16px;
+    border-radius: 8px;
+    text-align: center;
+  }
+  
+  .Timer h2 {
+    font-size: 1.5rem;
+    margin: 0;
+    padding: 8px;
+  }

@@ -1,10 +1,8 @@
 import './css/RepositoryTable.css'
 function RepositoryTable(liveRepositories) {
-    // console.log(typeof(liveRepositories))
-    // console.log(liveRepositories);
-    // if()
-    if(liveRepositories.liveRepositories == null || liveRepositories.liveRepositories.length == 0)
-    return <div> </div>
+
+    if(liveRepositories == null || liveRepositories.liveRepositories == null || liveRepositories.liveRepositories.length == 0)
+    return <h2> The server has taken offense and is not providing any responses, or such a repository simply does not exist </h2>
     
     const dataFormatter = (repository, header) => {
         if(repository[header] == true)

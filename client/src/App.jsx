@@ -1,42 +1,32 @@
-import { useState } from 'react'
+import { useState} from 'react'
 import trendLogo from './assets/logo.svg'
 import './css/App.css'
 import ControlButtons from './ControlButtons'
 import RepositoryTable from './RepositoryTable'
 import SearchBar from './SearchBar'
+import Timer from './timer'
 import axios from 'axios'
 import process from 'process';
 const port = process.env.PORT || 4000;
 
-// async function getLastSync() {
-//   try {
-//   const response = await axios.get(`http://localhost:${port}/last-update`)
-//   const currentTime = new Date();
-//   return (currentTime - Date(response.data))
-//   } catch(error) {
-//     console.error(error, 'TimerErr');
-//     return new Date();
-//   }
-// }
 
 function App() {
   const [liveRepositories, setLiveRepositories] = useState(null)
   const [wasItOurRepo, setWasItOur] = useState('')
-  // const [lastSyncTime, setLastSync] = useState(getLastSync())
+
+  const [lastSyncTime, setLastSync] = useState(0)
   
-  // const updateTimer = (newTime) => {
-  //   setLastSync(newTime);
-  // }
-  
+  setTimeout(() => {setLastSync(lastSyncTime + 60000)}, 60000);
+
   const updateRepositories = async () => {
-    // updateTimer(0);
     setWasItOur('');
+    setLastSync(0);
     try {
     const allRepositories = await axios.get(`http://localhost:${port}/repositories`);
-
     setLiveRepositories(allRepositories.data);
     } catch (error) {
       console.error(error);
+      setLiveRepositories([]);
     }
   }
 
@@ -56,6 +46,9 @@ function App() {
       }
       if(response.data.newRepo){
         setLiveRepositories(response.data.newRepo);
+      } else {
+        setWasItOur('Such repository does not exist');
+        setLiveRepositories([]);
       }
     } catch(error) {
       console.error(error);
@@ -65,20 +58,19 @@ function App() {
   return (
     <>
       <div>
-          <img src={trendLogo} className="logo" alt="React logo" />
+          <img src={trendLogo} className="logo" alt="React logo"/>
       </div>
-      {/* <Timer updateTimer= {lastSyncTime}/> */}
       <div className='search-and-button'>
         <ControlButtons updateRepositories={updateRepositories}/>
         <h2></h2>
         <SearchBar onSearch={handlerSearch}/>
       </div>
         <h2></h2>
-        <label>{wasItOurRepo}</label>
+        <h2>{wasItOurRepo}</h2>
         <RepositoryTable liveRepositories= {liveRepositories} />
+        <Timer lastSyncTime={lastSyncTime}/>
     </>
   )
 }
-
 
 export default App

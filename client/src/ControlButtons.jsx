@@ -8,13 +8,12 @@ function ControlButtons({ updateRepositories }) {
   const handleSync = async () => {
     
     try {
-    await axios.get(`http://localhost:${port}/sync`);
-    updateRepositories();
+      await axios.get(`http://localhost:${port}/sync`);
+      updateRepositories();
     } catch(error) {
       console.error(error);
     }
   };
-
 
   return (
     <div className="control-buttons">

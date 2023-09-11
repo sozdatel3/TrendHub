@@ -1,15 +1,19 @@
-import { useState } from "react";
+// import useDebounce
+import { useState, useEffect} from "react";
+import { useDebounce } from 'usehooks-ts'
 import './css/SearchBar.css'
+
 function SearchBar({onSearch}) {
-
     const [searchRepo, setSearchRepo] = useState('') ;
+    const debouncedValue = useDebounce(searchRepo, 500)
+    
     const handleSearchChange = (newSearch) => {
-        // console.log(typeof(newSearch.target.value));
-        // console.log(newSearch.target.value);
         setSearchRepo(newSearch.target.value)
-        onSearch(newSearch.target.value);
     }
-
+    useEffect(() => {
+        onSearch(searchRepo);
+    }, [debouncedValue]
+    )
     return <div className="search-bar">
         <input
         type="text"

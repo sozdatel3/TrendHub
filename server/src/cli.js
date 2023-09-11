@@ -27,12 +27,12 @@ program
       if (options.number) {
         const n = parseInt(options.number);
         for (let i = 0; i < n && i < repositories.length; i++) {
-          console.log(`Репозиторий номер: ${i + 1} :\n`);
+          console.log(`Repository number: ${i + 1} :\n`);
           console.log(repositories[i]);
         }
       } else {
         for (let i = 0; i < repositories.length; i++) {
-          console.log(`Репозиторий номер: ${i + 1} :\n`);
+          console.log(`Repository number: ${i + 1} :\n`);
           console.log(repositories[i]);
         }
       }
@@ -48,7 +48,7 @@ program
   .description('Поиск репозитория по имени или id')
   .action(async (nameOrId) => {
     if (nameOrId == undefined) {
-      console.error('Отсутствует обязательный аргумент. Используйте команду следующим образом: findRepo <nameOrId>');
+      console.error('A mandatory argument is missing. Use the command as follows: findRepo <nameOrId>');
       return;
     }
     try {
@@ -63,7 +63,7 @@ program
   .command('help')
   .description('Вывести справку о доступных командах')
   .action(() => {
-    program.outputHelp(); // Вывести справку о доступных командах
+    program.outputHelp();
   });
   
   module.exports = program;

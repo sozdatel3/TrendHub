@@ -9,10 +9,10 @@ const baseUserName = process.env.DB_USER;
 const basePassword = process.env.DB_PASSWORD;
 
 const sequelize = new Sequelize(baseName, baseUserName, basePassword, {
-  host: 'localhost',
+  host: baseHost,
   dialect: 'postgres',
-  port: 5432, // Порт PostgreSQL
-  logging: (msg) => {
+  port: basePort,
+    logging: (msg) => {
     loggerDataBase.info(msg);
   }
 });
@@ -62,9 +62,8 @@ const Repository = sequelize.define('Repository', {
   });
 
 
- const addRepositoriesToDB = async function addRepositoriesToDatabase(data) {
+ const addRepositoriesToDB = async (data) =>{
     try {
-      // Итерируемся по данным и добавляем каждый репозиторий в базу данных
       for (const repoData of data) {
         const existingRepo = await Repository.findOne({ where: { id: repoData.id } });
   
@@ -103,11 +102,11 @@ const Repository = sequelize.define('Repository', {
       }
       loggerDataBase.info('Данные успешно добавлены в базу данных.');
     } catch (error) {
-      loggerError.info('Произошла ошибка при добавлении данных в базу данных:', error);
+      loggerError.error('Произошла ошибка при добавлении данных в базу данных:', error);
     }
   }
 
-const takeRepo = async function (nameOrId) {
+const takeRepo = async  (nameOrId) => {
     const numberFromId = isNaN(Number(nameOrId)) ? -1 : Number(nameOrId);
     try {
         const repo = await Repository.findAll({
@@ -115,7 +114,7 @@ const takeRepo = async function (nameOrId) {
             where: 
                 Sequelize.or(
                     { id: numberFromId },
-                    { name: { [Sequelize.Op.like]: `%${nameOrId}%` }}//nameOrId }
+                    { name: { [Sequelize.Op.like]: `%${nameOrId}%` }}
                 )
             });
         if (repo.length > 0) {
@@ -124,7 +123,7 @@ const takeRepo = async function (nameOrId) {
             return null; // Репозиторий не найден
         }
     } catch (error) {
-        loggerError.info('Ошибка при поиске репозитория:', error);
+        loggerError.error('Ошибка при поиске репозитория:', error);
         throw error;
     }
 }
@@ -134,13 +133,10 @@ async function findAllRepositories() {
         const repositories = await Repository.findAll();
         return repositories;
     } catch (error) {
-        loggerError.info('Ошибка при поиске репозиториев в базе данных:', error);
+        loggerError.error('Ошибка при поиске репозиториев в базе данных:', error);
         throw error;
     }
 }
-// module.exports = addRepositoriesToDatabase;//addRepositoriesToDB;
-// module.exports = Repository;
-// module.exports = sequelize;
 
 module.exports = {
     addRepositoriesToDB,
