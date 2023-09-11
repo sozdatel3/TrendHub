@@ -1,4 +1,9 @@
 import './css/RepositoryTable.css'
+import PropTypes from 'prop-types';
+RepositoryTable.propTypes = {
+    liveRepositories: PropTypes.object.isRequired,
+  };
+
 function RepositoryTable(liveRepositories) {
 
     if(liveRepositories == null || liveRepositories.liveRepositories == null || liveRepositories.liveRepositories.length == 0)
@@ -24,7 +29,7 @@ function RepositoryTable(liveRepositories) {
               return curDate.toLocaleDateString("ru-RU", options);
         }
         if(header.endsWith('url') && repository[header]) {
-            return <a href= {repository[header]} target="_blank"> {repository[header]}</a>;
+            return <a href= {repository[header]} target="_blank" rel="noreferrer"> {repository[header]}</a>;
         }
         return repository[header];
     }

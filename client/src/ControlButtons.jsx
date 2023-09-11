@@ -1,7 +1,13 @@
 import axios from 'axios';
 import process from 'process';
+import PropTypes from 'prop-types';
+
 import './css/ControlButtons.css'
 const port = process.env.PORT || 4000;
+
+ControlButtons.propTypes = {
+  updateRepositories: PropTypes.func.isRequired,
+};
 
 function ControlButtons({ updateRepositories }) {
 

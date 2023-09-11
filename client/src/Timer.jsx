@@ -1,5 +1,8 @@
 import './css/timer.css'
-  
+import PropTypes from 'prop-types';
+Timer.propTypes = {
+    lastSyncTime: PropTypes.string.isRequired,
+  };
 function Timer({ lastSyncTime}) {
   
   return (

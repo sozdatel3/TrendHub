@@ -2,7 +2,11 @@
 import { useState, useEffect} from "react";
 import { useDebounce } from 'usehooks-ts'
 import './css/SearchBar.css'
+import PropTypes from 'prop-types';
 
+SearchBar.propTypes = {
+    onSearch: PropTypes.func.isRequired,
+  };  
 function SearchBar({onSearch}) {
     const [searchRepo, setSearchRepo] = useState('') ;
     const debouncedValue = useDebounce(searchRepo, 500)
@@ -10,9 +14,9 @@ function SearchBar({onSearch}) {
     const handleSearchChange = (newSearch) => {
         setSearchRepo(newSearch.target.value)
     }
-    useEffect(() => {
+    useEffect((searchRepo) => {
         onSearch(searchRepo);
-    }, [debouncedValue]
+    }, [debouncedValue, onSearch]
     )
     return <div className="search-bar">
         <input
